@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대한미식축구협회 (KAFA) 대시보드</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #0b192c;
+            --secondary-color: #1e3e62;
+            --accent-color: #00adb5;
+            --accent-hover: #008b92;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            width: 260px;
+            background-color: var(--primary-color);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand i {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+        }
+
+        .brand h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 24px;
+            color: #9ca3af;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover, .nav-item.active a {
+            color: #fff;
+            background-color: var(--secondary-color);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Main Content Area */
+        main {
+            margin-left: 260px;
+            flex-grow: 1;
+            padding: 30px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title h2 {
+            font-size: 1.6rem;
+            color: var(--primary-color);
+        }
+
+        .page-title p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .badge-tag {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg-color);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title i {
+            color: var(--accent-color);
+        }
+
+        .more-link {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .more-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Featured News Card (Width: 8) */
+        .featured-news {
+            grid-column: span 8;
+        }
+
+        .news-hero {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .news-hero .tag {
+            align-self: flex-start;
+            background-color: #ffedd5;
+            color: #c2410c;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .news-hero h3 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            line-height: 1.4;
+        }
+
+        .news-hero .subtitle {
+            font-size: 0.95rem;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .news-hero p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-meta {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        /* Match Results Card (Width: 4) */
+        .match-result {
+            grid-column: span 4;
+        }
+
+        .scoreboard {
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .match-league {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .teams-versus {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 40%;
+        }
+
+        .team-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .team-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .score {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--primary-color);
+        }
+
+        .vs {
+            font-size: 0.85rem;
+            color: #ef4444;
+            font-weight: 800;
+        }
+
+        .match-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border-top: 1px dashed var(--border-color);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        /* Notice List Card (Width: 6) */
+        .notice-card {
+            grid-column: span 6;
+        }
+
+        .notice-list {
+            list-style: none;
+        }
+
+        .notice-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .notice-item:last-child {
+            border-bottom: none;
+        }
+
+        .notice-date {
+            background: var(--bg-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            white-space: nowrap;
+        }
+
+        .notice-title {
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notice-title:hover {
+            color: var(--accent-color);
+        }
+
+        /* Teams Cloud Card (Width: 6) */
+        .teams-card {
+            grid-column: span 6;
+        }
+
+        .team-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .team-tag {
+            background-color: var(--bg-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .team-tag:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        /* Banner Zone (Width: 12) */
+        .banner-zone {
+            grid-column: span 12;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .banner-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .banner-content p {
+            font-size: 0.85rem;
+            color: #d1d5db;
+        }
+
+        .banner-btn {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.8;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .featured-news { grid-column: span 12; }
+            .match-result { grid-column: span 12; }
+            .notice-card { grid-column: span 12; }
+            .teams-card { grid-column: span 12; }
+        }
+
+        @media (max-width: 768px) {
+            aside { width: 70px; }
+            .brand h1, .nav-item span, .login-btn span { display: none; }
+            main { margin-left: 70px; padding: 15px; }
+            .brand { justify-content: center; padding: 20px 0; }
+            .nav-item a { justify-content: center; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside>
+        <div class="brand">
+            <i class="fa-solid fa-football"></i>
+            <h1>KAFA</h1>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active"><a href="#"><i class="fa-solid fa-chart-line"></i><span>DASHBOARD</span></a></li>
+            <li class="nav-item"><a href="#"><i class="fa-regular fa-newspaper"></i><span>NEWS</span></a></li>
+            <li class="nav-item"><a href="#"><i class="fa-regular fa-calendar-days"></i><span>SCHEDULE</span></a></li>
+            <li class="nav-item"><a href="#"><i class="fa-solid fa-trophy"></i><span>SCORES</span></a></li>
+            <li class="nav-item"><a href="#"><i class="fa-solid fa-users"></i><span>TEAMS</span></a></li>
+            <li class="nav-item"><a href="#"><i class="fa-solid fa-sitemap"></i><span>COMMITTEE</span></a></li>
+            <li class="nav-item"><a href="#"><i class="fa-solid fa-flag-usa"></i><span>NATIONAL TEAM</span></a></li>
+            <li class="nav-item"><a href="#"><i class="fa-solid fa-chart-pie"></i><span>STATS</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="login-btn">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>Login</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+        <header>
+            <div class="page-title">
+                <h2>대한미식축구협회 대시보드</h2>
+                <p>Korea American Football Association Official Portal</p>
+            </div>
+            <span class="badge-tag"><i class="fa-solid fa-award"></i> 2028 LA 올림픽 정식종목</span>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <!-- Featured News Card -->
+            <div class="card featured-news">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-star"></i> 주요 뉴스</span>
+                    <a href="#" class="more-link">READ MORE →</a>
+                </div>
+                <div class="news-hero">
+                    <span class="tag">국제교류</span>
+                    <h3>LA 램스, 대한미식축구협회와 서울·군위에서 유소년 플래그풋볼 클리닉 성료</h3>
+                    <div class="subtitle">LA 램스 풋볼 육성팀과 KAFA 플래그풋볼 코치진이 함께한 특별한 스포츠 교류</div>
+                    <p>
+                        미국 NFL 소속 LA 램스와 대한미식축구협회(KAFA)가 공동으로 진행한 유소년 플래그풋볼 클리닉이 서울과 군위에서 성공적으로 개최됐다.
+                        이번 클리닉은 2026년 7월 18일 서울 강북웰빙스포츠센터, 7월 19일 군위중고등학교에서 열렸으며, 양일간 약 200여명의 유소년 선수가 참가했다.
+                    </p>
+                    <div class="news-meta">
+                        <i class="fa-regular fa-clock"></i> 2026.07.20 | 대한미식축구협회
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Match Result Card -->
+            <div class="card match-result">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-circle-check"></i> 최근 경기 결과</span>
+                    <a href="#" class="more-link">전체보기 →</a>
+                </div>
+                <div class="scoreboard">
+                    <div class="match-league">2026년 춘계 경기강원 (GAFA) 선수권전</div>
+                    <div class="teams-versus">
+                        <div class="team">
+                            <span class="team-name">강원대학교</span>
+                            <span class="team-sub">( CAPRA )</span>
+                            <span class="score">2</span>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="team">
+                            <span class="team-name">성균관대</span>
+                            <span class="team-sub">( ROYALS )</span>
+                            <span class="score">0</span>
+                        </div>
+                    </div>
+                    <div class="match-info">
+                        <i class="fa-regular fa-calendar"></i> 2026. 05. 16 (토) 16:00<br>
+                        <i class="fa-solid fa-location-dot"></i> 홍천읍 생활체육공원
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notice List Card -->
+            <div class="card notice-card">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-bullhorn"></i> 공지사항 (Notice)</span>
+                    <a href="#" class="more-link">Read More →</a>
+                </div>
+                <ul class="notice-list">
+                    <li class="notice-item">
+                        <span class="notice-date">08 / 11</span>
+                        <a href="#" class="notice-title">[공지] 백성일(전임 이사) 제명 징계 공고문</a>
+                    </li>
+                    <li class="notice-item">
+                        <span class="notice-date">08 / 11</span>
+                        <a href="#" class="notice-title">[공지] 대한미식축구협회 2026 임시총회 결과 공지문</a>
+                    </li>
+                    <li class="notice-item">
+                        <span class="notice-date">08 / 10</span>
+                        <a href="#" class="notice-title">[공지] 2026년도 태클풋볼 선수/코치 추가 등록 안내</a>
+                    </li>
+                    <li class="notice-item">
+                        <span class="notice-date">08 / 07</span>
+                        <a href="#" class="notice-title">[공지] 2026 플래그풋볼 디비전리그 「하계 유·청소년부 전국대회」 개최 연기 안내</a>
+                    </li>
+                    <li class="notice-item">
+                        <span class="notice-date">08 / 07</span>
+                        <a href="#" class="notice-title">2026 플래그풋볼 디비전리그 「하계 일반부 전국대회」 장소 변경 및 대회 요강 안내</a>
+                    </li>
+                    <li class="notice-item">
+                        <span class="notice-date">08 / 06</span>
+                        <a href="#" class="notice-title">[공지] 대한미식축구협회 올림픽 국가대표팀 지원 현황 및 향후 일정 안내</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Teams Cloud Card -->
+            <div class="card teams-card">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-shield-halved"></i> 소속 팀 현황 (TEAMS)</span>
+                    <a href="#" class="more-link">더보기 →</a>
+                </div>
+                <div class="team-tags">
+                    <span class="team-tag">범</span>
+                    <span class="team-tag">킬러웨일즈</span>
+                    <span class="team-tag">라이거즈</span>
+                    <span class="team-tag">블랙라텔</span>
+                    <span class="team-tag">휘문고</span>
+                    <span class="team-tag">한광고</span>
+                    <span class="team-tag">배명중</span>
+                    <span class="team-tag">서울클럽</span>
+                    <span class="team-tag">소양마운틴스</span>
+                    <span class="team-tag">브니엘</span>
+                    <span class="team-tag">삼성중</span>
+                    <span class="team-tag">부경보건고</span>
+                    <span class="team-tag">성심보건고</span>
+                    <span class="team-tag">덕문</span>
+                    <span class="team-tag">관천중</span>
+                    <span class="team-tag">경북사대부중</span>
+                    <span class="team-tag">현풍중</span>
+                    <span class="team-tag">화원중</span>
+                    <span class="team-tag">카티바라</span>
+                    <span class="team-tag">DFL</span>
+                    <span class="team-tag">라이노스</span>
+                    <span class="team-tag">버스터즈</span>
+                    <span class="team-tag">이우중/고</span>
+                    <span class="team-tag">용인외고</span>
+                    <span class="team-tag">수리중</span>
+                    <span class="team-tag">군포중</span>
+                    <span class="team-tag">경일대</span>
+                    <span class="team-tag">영남대</span>
+                    <span class="team-tag">부산클럽</span>
+                    <span class="team-tag">동아고</span>
+                    <span class="team-tag">송도고</span>
+                    <span class="team-tag">인천클럽</span>
+                    <span class="team-tag">삼성고</span>
+                    <span class="team-tag">수원클럽</span>
+                    <span class="team-tag">충남삼성고</span>
+                </div>
+            </div>
+
+            <!-- Banner Zone -->
+            <div class="card banner-zone">
+                <div class="banner-content">
+                    <h3>FLAG FOOTBALL "전진! 또 전진!!"</h3>
+                    <p>Per Aspera ad Astra - 시련을 넘어 별을 향하여 | 대한미식축구협회 70년 역사</p>
+                </div>
+                <a href="#" class="banner-btn">갤러리 / 영상 보기</a>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p><strong>사단법인 대한미식축구협회 (KAFA)</strong> | 대구광역시 군위군 군위읍 내량길 28-28 (1층 대한미식축구협회 사무실)</p>
+            <p>사업자등록번호 : 212-82-07368 | 협회장 : 유호정 | Tel : 054-383-7003 | E-mail : kafa@kafa.org</p>
+            <p>COPYRIGHT ⓒ 2024 KAFA NPC (Non-Profit Corporation). ALL RIGHTS RESERVED.</p>
+        </footer>
+    </main>
+
+</body>
+</html>
